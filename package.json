@@ -1,0 +1,17 @@
+{
+  "name": "tg-bot",
+  "version": "1.0.0",
+  "description": "Личный AI-помощник Сергея в Telegram на Google Gemini",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "dotenv": "^16.4.5",
+    "node-telegram-bot-api": "^0.66.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
