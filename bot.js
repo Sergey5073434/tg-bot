@@ -2,7 +2,9 @@ require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-const { TELEGRAM_TOKEN, GEMINI_API_KEY, ALLOWED_USER_IDS } = process.env;
+const TELEGRAM_TOKEN = (process.env.TELEGRAM_TOKEN || '').trim();
+const GEMINI_API_KEY = (process.env.GEMINI_API_KEY || '').trim();
+const ALLOWED_USER_IDS = (process.env.ALLOWED_USER_IDS || '').trim();
 
 if (!TELEGRAM_TOKEN) throw new Error('TELEGRAM_TOKEN не задан в .env');
 if (!GEMINI_API_KEY) throw new Error('GEMINI_API_KEY не задан в .env');
