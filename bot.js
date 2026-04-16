@@ -16,7 +16,7 @@ const allowedIds = (ALLOWED_USER_IDS || '')
 const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true });
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({
-  model: 'gemini-2.0-flash',
+  model: 'gemini-2.5-flash',
   systemInstruction:
     'Ты — личный помощник пользователя. Отвечай по-русски, кратко и по делу. Помогай анализировать информацию, объяснять, искать решения.',
 });
