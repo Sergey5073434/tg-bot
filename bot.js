@@ -42,6 +42,24 @@ const getPrivateSession = (chatId) => {
   return privateSessions.get(chatId);
 };
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+const withRetry = async (fn, { tries = 3, baseDelay = 1000 } = {}) => {
+  let lastErr;
+  for (let i = 0; i < tries; i++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastErr = err;
+      const transient =
+        /503|429|ECONN|ETIMEDOUT|high demand|overloaded/i.test(err.message || '');
+      if (!transient || i === tries - 1) break;
+      await sleep(baseDelay * Math.pow(2, i));
+    }
+  }
+  throw lastErr;
+};
+
 const appendGroupMsg = (chatId, name, text) => {
   if (!groupBuffers.has(chatId)) groupBuffers.set(chatId, []);
   const buf = groupBuffers.get(chatId);
@@ -67,7 +85,7 @@ ${context || '(пусто)'}
 
   try {
     bot.sendChatAction(chatId, 'typing');
-    const result = await model.generateContent(prompt);
+    const result = await withRetry(() => model.generateContent(prompt));
     await bot.sendMessage(chatId, result.response.text(), {
       reply_to_message_id: msg.message_id,
     });
@@ -122,7 +140,7 @@ bot.on('message', async (msg) => {
     try {
       bot.sendChatAction(chatId, 'typing');
       const session = getPrivateSession(chatId);
-      const result = await session.sendMessage(text);
+      const result = await withRetry(() => session.sendMessage(text));
       await bot.sendMessage(chatId, result.response.text());
     } catch (err) {
       console.error('Gemini error:', err.message);
